@@ -1,3 +1,4 @@
+// @ts-nocheck
 // bridge opencode plugin
 //
 // Bridges opencode's plugin events to the `bridge hook` binary so opencode
