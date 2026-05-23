@@ -1,46 +1,10 @@
 import type { Plugin } from "@opencode-ai/plugin";
 import { isAbsolute, join } from "node:path";
-import { createRequire } from "node:module";
-import { fileURLToPath } from "node:url";
-
-const _require = createRequire(import.meta.url);
-const __dirname = join(fileURLToPath(import.meta.url), "..");
-
-const TRIPLES = [
-  `bridge-opencode.${process.platform}-${process.arch}.node`,
-  "bridge-opencode.node",
-];
-
-let native: {
-  checkBuffer(filePath: string): { isCurrent: boolean; hasUnsavedChanges: boolean };
-  refreshBuffer(filePath: string): void;
-  getVisualSelections(): Array<{
-    filePath: string;
-    startLine: number;
-    endLine: number;
-    cwd: string;
-    content: string;
-  }>;
-  sendMessage(message: string): void;
-};
-
-for (const name of TRIPLES) {
-  try {
-    native = _require(join(__dirname, name));
-    break;
-  } catch {
-    // try next triple
-  }
-}
-
-if (!native) {
-  throw new Error(
-    "bridge-opencode: native addon not found (tried darwin-arm64 and generic). " +
-      "Install with `npm install @xinleibird/bridge-opencode` to compile from source.",
-  );
-}
-
-const { checkBuffer, refreshBuffer, getVisualSelections } = native;
+import {
+  checkBuffer,
+  refreshBuffer,
+  getVisualSelections,
+} from "./index.cjs";
 
 type ToolName = "Edit" | "Write";
 

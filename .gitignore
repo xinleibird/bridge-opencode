@@ -1,6 +1,7 @@
 /target
 /.claude/
 *.node
-bridge-opencode.js
-bridge-opencode.d.ts
+index.cjs
+index.d.ts
+index.js
 node_modules/
