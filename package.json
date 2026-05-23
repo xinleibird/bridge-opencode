@@ -1,6 +1,6 @@
 {
   "name": "@xinleibird/bridge-opencode",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publishConfig": {
     "access": "public"
   },
@@ -13,8 +13,7 @@
     }
   },
   "scripts": {
-    "build": "napi build --platform --release",
-    "postinstall": "npm run build"
+    "build": "napi build --platform --release"
   },
   "napi": {
     "name": "bridge-opencode",
@@ -26,7 +25,7 @@
       ]
     }
   },
-  "dependencies": {
+  "devDependencies": {
     "@napi-rs/cli": "^2.18.0"
   },
   "peerDependencies": {
