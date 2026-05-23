@@ -1,0 +1,74 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  verify-clean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify clean working tree
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "ERROR: Working tree is not clean"
+            exit 1
+          fi
+
+  build:
+    needs: verify-clean
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: macos-latest
+            target: aarch64-apple-darwin
+          - runner: macos-latest
+            target: x86_64-apple-darwin
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - name: Install dependencies
+        run: npm ci
+      - name: Build native addon
+        run: npx @napi-rs/cli build --platform --release --features napi --js index.cjs --target ${{ matrix.target }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bridge-opencode-${{ matrix.target }}
+          path: |
+            *.node
+            index.cjs
+            index.d.ts
+          retention-days: 5
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: prebuilds
+          pattern: bridge-opencode-*
+          merge-multiple: true
+      - name: Move artifacts to root
+        run: |
+          mv prebuilds/*.node ./
+          mv prebuilds/index.cjs ./
+          mv prebuilds/index.d.ts ./
+      - name: Publish to npm
+        run: npm publish

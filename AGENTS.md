@@ -24,5 +24,4 @@ npm run build            # napi build --platform --release
 - `rmp = "=0.8.14"` — pinned because 0.8.15 pulls in a breaking change that clashes with `rmpv`, which `neovim-lib` depends on.
 - RPC to Neovim (`src/action/neovim/`) uses `neovim-lib` over msgpack-rpc.
 - opencode loads `bridge-opencode` via `opencode.json`: `"plugin": ["bridge-opencode"]`
-- The npm package's `postinstall` script compiles Rust into a `.node` native addon via napi-rs.
 - napi features are behind `napi` feature gate to allow `cargo test` without Node.js linkage.
