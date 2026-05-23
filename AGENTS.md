@@ -4,7 +4,7 @@
 
 Neovim Lua plugin + Rust CLI binary that bridges opencode and Neovim.
 
-- `plugin/bridge.lua` — auto-executed at nvim startup, runs `serverstart('/tmp/sidekick-<pid>.sock')`
+- `plugin/bridge.lua` — auto-executed at nvim startup, runs `serverstart('/tmp/bridge-<pid>.sock')`
 - `src/main.rs` — binary entry, single subcommand `bridge hook`
 - `src/lib.rs` — re-exports `action`, `constants`, `handler`, `hook`, `utils` for integration tests
 - `bin/README.md` — documents the build output directory
@@ -12,7 +12,7 @@ Neovim Lua plugin + Rust CLI binary that bridges opencode and Neovim.
 ## Commands
 
 ```sh
-cargo build --release && cp target/release/bridge bin/
+cargo build --release
 cargo test
 cargo check
 ```
@@ -32,7 +32,6 @@ Response: `{ hookSpecificOutput: { permissionDecision, permissionDecisionReason,
 
 ## Architecture notes
 
-- Socket discovery (`src/utils.rs`) globs `/tmp/sidekick-*.sock` — the socket name still says "sidekick", a legacy from the upstream fork. Both ends must agree on the prefix.
 - `rmp = "=0.8.14"` — pinned because 0.8.15 pulls in a breaking change that clashes with `rmpv`, which `neovim-lib` depends on.
 - RPC to Neovim (`src/action/neovim/`) uses `neovim-lib` over msgpack-rpc.
 - lazy.nvim: `build` function compiles binary and symlinks into `~/.config/opencode/{bin,plugins}/`
