@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  verify-clean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify clean working tree
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "ERROR: Working tree is not clean. Run local verification first."
+            git status
+            exit 1
+          fi
+
+  build:
+    needs: verify-clean
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: macos-latest
+            target: aarch64-apple-darwin
+          - runner: macos-latest
+            target: x86_64-apple-darwin
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-action@stable
+
+      - name: Build native addon
+        run: npx @napi-rs/cli build --platform --release --features napi --target ${{ matrix.target }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bridge-opencode-${{ matrix.target }}
+          path: "*.node"
+          retention-days: 5
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: prebuilds
+          pattern: bridge-opencode-*
+          merge-multiple: true
+
+      - name: Verify artifacts exist
+        run: ls -la prebuilds/
+
+      - name: Publish to npm
+        uses: npm-publish-action@v5
