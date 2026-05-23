@@ -6,6 +6,12 @@
   },
   "type": "module",
   "main": "bridge.ts",
+  "exports": {
+    ".": {
+      "import": "./bridge.ts",
+      "default": "./bridge.ts"
+    }
+  },
   "scripts": {
     "build": "napi build --platform --release",
     "postinstall": "npm run build"

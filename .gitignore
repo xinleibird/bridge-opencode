@@ -3,3 +3,4 @@
 *.node
 bridge-opencode.js
 bridge-opencode.d.ts
+node_modules/

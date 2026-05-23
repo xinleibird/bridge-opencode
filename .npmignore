@@ -1,8 +1,7 @@
-plugin/
-tests/
-src/
-Cargo.toml
-Cargo.lock
-build.rs
-AGENTS.md
+.git/
 .gitignore
+AGENTS.md
+node_modules/
+plugin/
+target/
+tests/
