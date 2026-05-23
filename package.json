@@ -1,0 +1,29 @@
+{
+  "name": "@xinleibird/bridge-opencode",
+  "version": "0.0.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "main": "bridge.ts",
+  "scripts": {
+    "build": "napi build --platform --release",
+    "postinstall": "npm run build"
+  },
+  "napi": {
+    "name": "bridge-opencode",
+    "triples": {
+      "defaults": false,
+      "additional": [
+        "aarch64-apple-darwin",
+        "x86_64-apple-darwin"
+      ]
+    }
+  },
+  "dependencies": {
+    "@napi-rs/cli": "^2.18.0"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=1.0.0"
+  }
+}

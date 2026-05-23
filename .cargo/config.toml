@@ -1,0 +1,3 @@
+[alias]
+check-all = "check --features napi"
+build-release = "build --release --features napi"

@@ -1,4 +1,4 @@
-use bridge::utils::find_matching_sockets;
+use bridge_opencode::utils::find_matching_sockets;
 
 #[test]
 fn test_find_matching_sockets_empty() {

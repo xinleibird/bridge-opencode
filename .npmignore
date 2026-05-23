@@ -1,0 +1,8 @@
+plugin/
+tests/
+src/
+Cargo.toml
+Cargo.lock
+build.rs
+AGENTS.md
+.gitignore

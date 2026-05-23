@@ -1,3 +1,5 @@
 /target
 /.claude/
-/bin/bridge
+*.node
+bridge-opencode.js
+bridge-opencode.d.ts

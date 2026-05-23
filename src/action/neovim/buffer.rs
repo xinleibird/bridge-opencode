@@ -74,6 +74,7 @@ pub fn get_visual_selection(nvim: &mut Neovim) -> Result<Option<EditorContext>> 
         start_line: u32,
         end_line: u32,
         cwd: String,
+        content: String,
     }
 
     let data: SelectionData =
@@ -84,5 +85,6 @@ pub fn get_visual_selection(nvim: &mut Neovim) -> Result<Option<EditorContext>> 
         start_line: data.start_line,
         end_line: data.end_line,
         cwd: data.cwd,
+        content: data.content,
     }))
 }

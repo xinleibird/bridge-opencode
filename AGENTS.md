@@ -1,37 +1,28 @@
-# bridge — AGENTS.md
+# bridge-opencode — AGENTS.md
 
 ## Project structure
 
-Neovim Lua plugin + Rust CLI binary that bridges opencode and Neovim.
+Neovim Lua plugin + napi-rs Rust native addon that bridges opencode and Neovim.
 
 - `plugin/bridge.lua` — auto-executed at nvim startup, runs `serverstart('/tmp/bridge-<pid>.sock')`
-- `src/main.rs` — binary entry, single subcommand `bridge hook`
-- `src/lib.rs` — re-exports `action`, `constants`, `handler`, `hook`, `utils` for integration tests
-- `bin/README.md` — documents the build output directory
+- `bridge.ts` — opencode plugin entry point (package main)
+- `src/lib.rs` — re-exports `action`, `constants`, `handler`, `utils`; exports `#[napi]` functions
+- `src/handler.rs` — action wrappers for Neovim RPC calls
 
 ## Commands
 
 ```sh
-cargo build --release
-cargo test
-cargo check
+cargo build --release    # builds napi addon (also via `npm run build`)
+cargo test               # tests without napi (uses --no-default-features internally)
+cargo check              # lightweight check without napi
+cargo check-all          # full check with napi (alias for check --features napi)
+npm run build            # napi build --platform --release
 ```
 
-## Protocol
-
-`bridge hook` reads JSON from stdin and writes JSON to stdout, following the Claude Code hook protocol:
-
-```json
-// PreToolUse / PostToolUse
-{"hook_event_name":"PreToolUse","tool_name":"Edit","tool_input":{"file_path":"..."}}
-// UserPromptSubmit
-{"hook_event_name":"UserPromptSubmit","prompt":"..."}
-```
-
-Response: `{ hookSpecificOutput: { permissionDecision, permissionDecisionReason, additionalContext } }`.
-
-## Architecture notes
+## Architecture
 
 - `rmp = "=0.8.14"` — pinned because 0.8.15 pulls in a breaking change that clashes with `rmpv`, which `neovim-lib` depends on.
 - RPC to Neovim (`src/action/neovim/`) uses `neovim-lib` over msgpack-rpc.
-- lazy.nvim: `build` function compiles binary and symlinks into `~/.config/opencode/{bin,plugins}/`
+- opencode loads `bridge-opencode` via `opencode.json`: `"plugin": ["bridge-opencode"]`
+- The npm package's `postinstall` script compiles Rust into a `.node` native addon via napi-rs.
+- napi features are behind `napi` feature gate to allow `cargo test` without Node.js linkage.

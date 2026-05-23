@@ -12,6 +12,7 @@ pub struct EditorContext {
     pub start_line: u32,
     pub end_line: u32,
     pub cwd: String,
+    pub content: String,
 }
 
 pub trait Action {
