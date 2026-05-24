@@ -19,6 +19,21 @@ cargo check-all          # full check with napi (alias for check --features napi
 npm run build            # napi build --platform --release
 ```
 
+## CI/CD
+
+**GitHub Actions** (`.github/workflows/`):
+
+- **CI** (`ci.yml`) — on push to `main` and PRs:
+  - `verify` job: `cargo check` + `cargo test --no-default-features` on Ubuntu
+  - `build` job: builds napi addon for all 4 targets (macOS aarch64/x86_64, Linux x86_64/arm64), uploads `.node` artifacts (retention: 5 days)
+
+- **Release** (`release.yml`) — on tag push (`v*`):
+  - `verify-clean` job: ensures working tree is clean
+  - `build` job: same matrix as CI, uploads `.node` + `index.cjs` + `index.d.ts`
+  - `publish` job: downloads artifacts, runs `npm publish`
+
+**No manual `npm publish`** — release is fully automated via GitHub Actions on tag push.
+
 ## Architecture
 
 - `rmp = "=0.8.14"` — pinned because 0.8.15 pulls in a breaking change that clashes with `rmpv`, which `neovim-lib` depends on.

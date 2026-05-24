@@ -40,15 +40,10 @@ impl Action for NeovimAction {
     }
 
     fn refresh_buffer(&self, file_path: &str) -> Result<()> {
-        let any_success = connection::for_each_instance(&self.socket_paths, |nvim| {
+        connection::for_each_instance(&self.socket_paths, |nvim| {
             buffer::refresh_buffer(nvim, file_path)
         });
-
-        if any_success {
-            Ok(())
-        } else {
-            anyhow::bail!("couldn't refresh Neovim")
-        }
+        Ok(())
     }
 
     fn send_message(&self, message: &str) -> Result<()> {

@@ -33,7 +33,11 @@ where
         .try_fold(init, |mut acc, mut nvim| match f(&mut acc, &mut nvim) {
             Ok(should_continue) => {
                 any_processed = true;
-                if should_continue { Ok(acc) } else { Err(acc) }
+                if should_continue {
+                    Ok(acc)
+                } else {
+                    Err(acc)
+                }
             }
             Err(_) => Ok(acc),
         });

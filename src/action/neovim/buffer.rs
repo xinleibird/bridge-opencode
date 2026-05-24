@@ -1,7 +1,7 @@
 use super::lua;
 use crate::action::{BufferStatus, EditorContext};
 use anyhow::{Context, Result};
-use neovim_lib::{Neovim, NeovimApi, neovim_api::Buffer};
+use neovim_lib::{neovim_api::Buffer, Neovim, NeovimApi};
 use std::path::PathBuf;
 
 pub fn find_buffer(nvim: &mut Neovim, file_path: &str) -> Result<Buffer> {

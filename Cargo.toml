@@ -1,6 +1,6 @@
 [package]
 name = "bridge-opencode"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2024"
 
 [lib]
@@ -17,7 +17,7 @@ napi = ["dep:napi", "dep:napi-derive"]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 anyhow = "1.0"
-neovim-lib = "0.6"
+neovim-lib = { path = "vendor/neovim-lib" }
 glob = "0.3"
 napi = { version = "2", default-features = false, features = ["napi6"], optional = true }
 napi-derive = { version = "2", optional = true }

@@ -1,0 +1,32 @@
+[package]
+name = "neovim-lib"
+version = "0.6.1"
+authors = ["daa84 <daa84@inbox.ru>"]
+exclude = ["generate.bat", "Makefile"]
+description = "msgpack-rpc neovim client"
+documentation = "https://docs.rs/neovim-lib"
+readme = "README.md"
+keywords = ["neovim"]
+categories = ["api-bindings"]
+license = "LGPL-3.0"
+repository = "https://github.com/daa84/neovim-lib"
+
+[dependencies.log]
+version = "0.4"
+
+[dependencies.rmp]
+version = "=0.8.14"
+
+[dependencies.rmpv]
+version = "0.4"
+features = ["with-serde"]
+
+[dev-dependencies.tempdir]
+version = "0.3"
+
+[target."cfg(unix)".dependencies.unix_socket]
+version = "0.5.0"
+
+[badges.travis-ci]
+branch = "master"
+repository = "daa84/neovim-lib"
