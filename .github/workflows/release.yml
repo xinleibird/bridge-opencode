@@ -62,5 +62,7 @@ jobs:
           path: prebuilds
           pattern: bridge-opencode-*
           merge-multiple: true
+      - name: Build JS wrapper
+        run: npm run build
       - name: Publish to npm
         run: npm publish
