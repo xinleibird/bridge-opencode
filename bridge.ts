@@ -67,7 +67,9 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
       for (const filePath of call.filePaths) {
         const status = await checkBuffer(filePath);
         if (status.hasUnsavedChanges && status.isCurrent) {
-          throw new Error("CANNOT PROCEED: unsaved changes in Neovim — you MUST stop all bash and edit operations");
+          throw new Error(
+            "STOP: Cannot apply changes — Neovim has unsaved edits. DO NOT attempt to resolve this yourself. Wait for the user to save or close the file. DO NOT use the Built-In Tools resolve this.",
+          );
         }
       }
 
