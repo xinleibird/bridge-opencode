@@ -66,5 +66,10 @@ jobs:
           path: prebuilds
           pattern: bridge-opencode-*
           merge-multiple: true
+      - name: Move index files to root
+        run: |
+          mv prebuilds/index.cjs ./
+          mv prebuilds/index.js ./
+          mv prebuilds/index.d.ts ./
       - name: Publish to npm
         run: npm publish
