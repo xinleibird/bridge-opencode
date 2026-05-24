@@ -67,7 +67,7 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
       for (const filePath of call.filePaths) {
         const status = await checkBuffer(filePath);
         if (status.hasUnsavedChanges && status.isCurrent) {
-          throw new Error("bridge-opencode: file has unsaved changes in Neovim");
+          throw new Error("CANNOT PROCEED: unsaved changes in Neovim — you MUST stop all bash and edit operations");
         }
       }
 
