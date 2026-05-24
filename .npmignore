@@ -1,8 +1,14 @@
 .cargo/
+.github/
 .git/
 .gitignore
 AGENTS.md
 node_modules/
 plugin/
+src/
 target/
 tests/
+build.rs
+Cargo.lock
+Cargo.toml
+prebuilds/

@@ -65,10 +65,9 @@ jobs:
           path: prebuilds
           pattern: bridge-opencode-*
           merge-multiple: true
-      - name: Copy node files to root
-        run: cp prebuilds/*.node ./
-      - name: Move index files to root
+      - name: Move artifacts to root
         run: |
+          mv prebuilds/*.node ./
           mv prebuilds/index.cjs ./
           mv prebuilds/index.d.ts ./
       - name: Publish to npm

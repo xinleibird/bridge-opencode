@@ -26,14 +26,8 @@ Inspired by / forked from [sidekick](https://github.com/NishantJoshi00/sidekick)
 
 ### opencode plugin
 
-```sh
-cd ~/.config/opencode && npm install @xinleibird/bridge-opencode
-```
-
 ```json
 {
   "plugin": ["@xinleibird/bridge-opencode"]
 }
 ```
-
-The `postinstall` script compiles the Rust native addon via napi-rs.
