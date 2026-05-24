@@ -1,8 +1,12 @@
 # bridge-opencode
 
-Bridge between opencode and Neovim.
+Bridge between opencode and Neovim, inspired by [sidekick](https://github.com/NishantJoshi00/sidekick).
 
-Inspired by / forked from [sidekick](https://github.com/NishantJoshi00/sidekick) — thanks [@NishantJoshi00](https://github.com/NishantJoshi00).
+## Features
+
+- **Buffer protection**: When you have unsaved changes in a buffer, opencode waits — edits are denied and your work is preserved
+- **Auto-reload**: When opencode modifies a file you have open, the buffer is auto-reloaded with cursor position preserved
+- **Visual selection context**: Visual selections in Neovim are sent to opencode as chat context
 
 ## Structure
 
@@ -31,3 +35,7 @@ Inspired by / forked from [sidekick](https://github.com/NishantJoshi00/sidekick)
   "plugin": ["@xinleibird/bridge-opencode"]
 }
 ```
+
+## Platforms
+
+Currently only **macOS** and **Linux** (x64, ARM64) are supported. Windows is not supported.
