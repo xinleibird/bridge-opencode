@@ -10,12 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Verify clean working tree
         run: |
           if [ -n "$(git status --porcelain)" ]; then
-            echo "ERROR: Working tree is not clean. Run local verification first."
-            git status
+            echo "ERROR: Working tree is not clean"
             exit 1
           fi
 
@@ -31,18 +29,14 @@ jobs:
             target: x86_64-apple-darwin
     steps:
       - uses: actions/checkout@v4
-
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
-
       - name: Install dependencies
         run: npm ci
-
       - name: Build native addon
         run: npx @napi-rs/cli build --platform --release --features napi --target ${{ matrix.target }}
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -53,18 +47,20 @@ jobs:
   publish:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
-
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           path: prebuilds
           pattern: bridge-opencode-*
           merge-multiple: true
-
-      - name: Verify artifacts exist
-        run: ls -la prebuilds/
-
       - name: Publish to npm
-        uses: JS-DevTools/npm-publish-action@v5
+        run: npm publish
