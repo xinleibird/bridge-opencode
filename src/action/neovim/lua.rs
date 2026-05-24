@@ -33,7 +33,7 @@ pub fn refresh_buffer_lua(buf_number: i64) -> String {
 pub fn send_notification_lua(message: &str) -> String {
     format!(
         r#"vim.notify("{}", vim.log.levels.WARN)"#,
-        message.replace('"', r#"\""#)
+        message.replace('\\', "\\\\").replace('"', r#"\""#)
     )
 }
 

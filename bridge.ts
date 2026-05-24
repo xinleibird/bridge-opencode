@@ -76,7 +76,7 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
 
       for (const filePath of call.filePaths) {
         const status = await checkBuffer(filePath);
-        if (status.hasUnsavedChanges && status.isCurrent) {
+        if (status.hasUnsavedChanges) {
           throw new Error(
             "bridge: file has unsaved changes in Neovim",
           );
