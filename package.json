@@ -1,6 +1,6 @@
 {
   "name": "@xinleibird/bridge-opencode",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "type": "module",
   "main": "bridge.ts",
   "repository": {
