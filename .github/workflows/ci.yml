@@ -42,7 +42,7 @@ jobs:
         run: npm ci
 
       - name: Build native addon
-        run: npx @napi-rs/cli build --platform --release --features napi --target ${{ matrix.target }}
+        run: npx @napi-rs/cli build --platform --release --features napi --js index.cjs --target ${{ matrix.target }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
