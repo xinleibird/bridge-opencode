@@ -103,7 +103,7 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
 
       const lines = filteredSelections.map((s) => {
         const path = s.filePath.startsWith(cwd + "/")
-          ? "@" + s.filePath.slice(cwd.length + 1)
+          ? "./" + s.filePath.slice(cwd.length + 1)
           : s.filePath;
         return `${path}:${s.startLine}-${s.endLine}`;
       });
