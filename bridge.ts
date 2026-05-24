@@ -1,10 +1,6 @@
 import type { Plugin } from "@opencode-ai/plugin";
 import { isAbsolute, join } from "node:path";
-import {
-  checkBuffer,
-  refreshBuffer,
-  getVisualSelections,
-} from "./index.cjs";
+import { checkBuffer, refreshBuffer, getVisualSelections } from "./index.cjs";
 
 type ToolName = "Edit" | "Write";
 
@@ -23,9 +19,7 @@ const PATCH_FILE_MARKERS = [
 function pickFilePath(args: unknown): string | null {
   if (!args || typeof args !== "object") return null;
   const candidate = (args as Record<string, unknown>).filePath;
-  return typeof candidate === "string" && candidate.length > 0
-    ? candidate
-    : null;
+  return typeof candidate === "string" && candidate.length > 0 ? candidate : null;
 }
 
 function pickPatchPaths(args: unknown): string[] {
@@ -47,11 +41,7 @@ function pickPatchPaths(args: unknown): string[] {
   return paths;
 }
 
-function resolveCall(
-  tool: string,
-  args: unknown,
-  cwd: string,
-): { filePaths: string[] } | null {
+function resolveCall(tool: string, args: unknown, cwd: string): { filePaths: string[] } | null {
   const abs = (p: string) => (isAbsolute(p) ? p : join(cwd, p));
 
   if (tool === "apply_patch") {
@@ -76,10 +66,8 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
 
       for (const filePath of call.filePaths) {
         const status = await checkBuffer(filePath);
-        if (status.hasUnsavedChanges) {
-          throw new Error(
-            "bridge: file has unsaved changes in Neovim",
-          );
+        if (status.hasUnsavedChanges && status.isCurrent) {
+          throw new Error("bridge: file has unsaved changes in Neovim");
         }
       }
 
@@ -105,9 +93,7 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
       }
       if (!selections || selections.length === 0) return;
 
-      const filteredSelections = selections.filter(
-        (s) => !s.cwd || s.cwd === cwd,
-      );
+      const filteredSelections = selections.filter((s) => !s.cwd || s.cwd === cwd);
       if (filteredSelections.length === 0) return;
 
       const textPart = output.parts.find((p: any) => p.type === "text") as any;
