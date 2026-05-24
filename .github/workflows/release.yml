@@ -44,7 +44,6 @@ jobs:
           path: |
             *.node
             index.cjs
-            index.js
             index.d.ts
           retention-days: 5
 
@@ -69,7 +68,6 @@ jobs:
       - name: Move index files to root
         run: |
           mv prebuilds/index.cjs ./
-          mv prebuilds/index.js ./
           mv prebuilds/index.d.ts ./
       - name: Publish to npm
         run: npm publish
