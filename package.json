@@ -1,12 +1,12 @@
 {
   "name": "@xinleibird/bridge-opencode",
-  "version": "0.1.5",
-  "type": "module",
-  "main": "bridge.ts",
+  "version": "0.1.6",
   "repository": {
     "type": "git",
     "url": "https://github.com/xinleibird/bridge-opencode"
   },
+  "type": "module",
+  "main": "bridge.ts",
   "exports": {
     ".": {
       "import": "./bridge.ts",
