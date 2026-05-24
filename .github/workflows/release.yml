@@ -41,7 +41,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bridge-opencode-${{ matrix.target }}
-          path: "*.node"
+          path: |
+            *.node
+            index.cjs
+            index.js
+            index.d.ts
           retention-days: 5
 
   publish:
@@ -62,7 +66,5 @@ jobs:
           path: prebuilds
           pattern: bridge-opencode-*
           merge-multiple: true
-      - name: Build JS wrapper
-        run: npm run build
       - name: Publish to npm
         run: npm publish
