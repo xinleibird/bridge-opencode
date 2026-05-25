@@ -1,5 +1,7 @@
 import type { Plugin } from "@opencode-ai/plugin";
-import { isAbsolute, join } from "node:path";
+import { access } from "node:fs/promises";
+import { extname, isAbsolute, join } from "node:path";
+import { lookup } from "mime-types";
 import { checkBuffer, refreshBuffer, getVisualSelections, sendMessage } from "./index.cjs";
 
 type ToolName = "Edit" | "Write";
@@ -99,17 +101,41 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
       const filteredSelections = selections.filter((s) => !s.cwd || s.cwd === cwd);
       if (filteredSelections.length === 0) return;
 
+      let attached = 0;
+      for (const s of filteredSelections) {
+        try {
+          await access(s.filePath);
+        } catch {
+          continue;
+        }
+
+        const filename = s.filePath.startsWith(cwd + "/")
+          ? "./" + s.filePath.slice(cwd.length + 1)
+          : s.filePath;
+
+        const url = s.startLine
+          ? `file://${s.filePath}?start=${s.startLine}&end=${s.endLine}`
+          : `file://${s.filePath}`;
+
+        const displayFilename = s.startLine
+          ? `${filename}:${s.startLine}-${s.endLine}`
+          : filename;
+
+        output.parts.push({
+          type: "file",
+          mime: lookup(extname(s.filePath)) || "text/plain",
+          filename: displayFilename,
+          url,
+        });
+        attached++;
+      }
+
+      if (attached === 0) return;
+
       const textPart = output.parts.find((p: any) => p.type === "text") as any;
-      if (!textPart || typeof textPart.text !== "string") return;
-
-      const lines = filteredSelections.map((s) => {
-        const path = s.filePath.startsWith(cwd + "/")
-          ? "- @" + s.filePath.slice(cwd.length + 1)
-          : "- " + s.filePath;
-        return `${path}:${s.startLine}-${s.endLine}`;
-      });
-
-      textPart.text = `${lines.join("\n")}\n\n${textPart.text}`;
+      if (textPart && typeof textPart.text === "string") {
+        textPart.text = `[Attached ${attached} selection(s)]\n\n${textPart.text}`;
+      }
     },
   };
 };
