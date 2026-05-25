@@ -34,6 +34,27 @@ npm run build            # napi build --platform --release
 
 **No manual `npm publish`** — release is fully automated via GitHub Actions on tag push.
 
+## Release workflow
+
+```sh
+# 1. bump version in package.json (e.g. 0.2.1 → 0.2.2)
+
+# 2. stage all changes
+git add .
+
+# 3. commit with conventional-commit message
+git commit
+
+# 4. tag matching the new version
+git tag v0.2.2
+
+# 5. push commit and tag
+git push origin main
+git push origin v0.2.2
+```
+
+GitHub Actions `release.yml` automatically builds napi addon for all 4 targets and runs `npm publish`. No manual publish needed.
+
 ## Architecture
 
 - `rmp = "=0.8.14"` — pinned because 0.8.15 pulls in a breaking change that clashes with `rmpv`, which `neovim-lib` depends on.
