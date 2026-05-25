@@ -1,6 +1,6 @@
 import type { Plugin } from "@opencode-ai/plugin";
 import { isAbsolute, join } from "node:path";
-import { checkBuffer, refreshBuffer, getVisualSelections } from "./index.cjs";
+import { checkBuffer, refreshBuffer, getVisualSelections, sendMessage } from "./index.cjs";
 
 type ToolName = "Edit" | "Write";
 
@@ -67,6 +67,7 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
       for (const filePath of call.filePaths) {
         const status = await checkBuffer(filePath);
         if (status.hasUnsavedChanges && status.isCurrent) {
+          await sendMessage("File has unsaved changes. Please save it first.");
           throw new Error(
             "STOP: Cannot apply changes — Neovim has unsaved edits. DO NOT attempt to resolve this yourself. Wait for the user to save or close the file. DO NOT use the Built-In Tools resolve this.",
           );

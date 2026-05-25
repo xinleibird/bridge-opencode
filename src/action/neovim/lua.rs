@@ -31,10 +31,13 @@ pub fn refresh_buffer_lua(buf_number: i64) -> String {
 }
 
 pub fn send_notification_lua(message: &str) -> String {
-    format!(
-        r#"vim.notify("{}", vim.log.levels.WARN)"#,
-        message.replace('\\', "\\\\").replace('"', r#"\""#)
-    )
+    let escaped = message
+        .replace('\\', "\\\\")
+        .replace('"', r#"\""#)
+        .replace('\n', "\\n")
+        .replace('\r', "\\r")
+        .replace('\t', "\\t");
+    format!(r#"vim.notify("{}", vim.log.levels.ERROR)"#, escaped)
 }
 
 pub fn get_visual_selection_lua() -> &'static str {

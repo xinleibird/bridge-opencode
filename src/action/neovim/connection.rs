@@ -15,10 +15,21 @@ pub fn for_each_instance<F>(socket_paths: &[PathBuf], mut f: F) -> bool
 where
     F: FnMut(&mut Neovim) -> Result<()>,
 {
-    socket_paths
-        .iter()
-        .filter_map(|path| connect(path).ok())
-        .any(|mut nvim| f(&mut nvim).is_ok())
+    let mut at_least_one_success = false;
+
+    for path in socket_paths {
+        match connect(path) {
+            Ok(mut nvim) => match f(&mut nvim) {
+                Ok(()) => {
+                    at_least_one_success = true;
+                }
+                Err(_) => {}
+            },
+            Err(_) => {}
+        }
+    }
+
+    at_least_one_success
 }
 
 pub fn try_fold_instances<T, F>(socket_paths: &[PathBuf], init: T, mut f: F) -> Option<T>
