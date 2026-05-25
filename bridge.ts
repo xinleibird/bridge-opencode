@@ -1,7 +1,7 @@
 import type { Plugin } from "@opencode-ai/plugin";
+import crypto from "node:crypto";
 import { access } from "node:fs/promises";
-import { extname, isAbsolute, join } from "node:path";
-import { lookup } from "mime-types";
+import { isAbsolute, join } from "node:path";
 import { checkBuffer, refreshBuffer, getVisualSelections, sendMessage } from "./index.cjs";
 
 type ToolName = "Edit" | "Write";
@@ -89,7 +89,7 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
       }
     },
 
-    "chat.message": async (_input, output) => {
+    "chat.message": async (input, output) => {
       let selections;
       try {
         selections = await getVisualSelections();
@@ -101,6 +101,7 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
       const filteredSelections = selections.filter((s) => !s.cwd || s.cwd === cwd);
       if (filteredSelections.length === 0) return;
 
+      const refs: string[] = [];
       let attached = 0;
       for (const s of filteredSelections) {
         try {
@@ -108,24 +109,22 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
         } catch {
           continue;
         }
+        if (!s.startLine) continue;
 
         const filename = s.filePath.startsWith(cwd + "/")
           ? "./" + s.filePath.slice(cwd.length + 1)
           : s.filePath;
-
-        const url = s.startLine
-          ? `file://${s.filePath}?start=${s.startLine}&end=${s.endLine}`
-          : `file://${s.filePath}`;
-
-        const displayFilename = s.startLine
-          ? `${filename}:${s.startLine}-${s.endLine}`
-          : filename;
+        const displayFilename = `${filename}:${s.startLine}-${s.endLine}`;
+        refs.push(displayFilename);
 
         output.parts.push({
           type: "file",
-          mime: lookup(extname(s.filePath)) || "text/plain",
+          id: crypto.randomUUID(),
+          sessionID: input.sessionID,
+          messageID: input.messageID ?? "",
+          mime: "text/plain",
           filename: displayFilename,
-          url,
+          url: `file://${s.filePath}?start=${s.startLine}&end=${s.endLine}`,
         });
         attached++;
       }
@@ -134,7 +133,7 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
 
       const textPart = output.parts.find((p: any) => p.type === "text") as any;
       if (textPart && typeof textPart.text === "string") {
-        textPart.text = `[Attached ${attached} selection(s)]\n\n${textPart.text}`;
+        textPart.text = `${refs.join("\n")}\n\n${textPart.text}`;
       }
     },
   };
