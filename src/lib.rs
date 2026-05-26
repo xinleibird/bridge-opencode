@@ -63,9 +63,7 @@ mod bindings {
 
     #[napi]
     pub fn check_buffer(file_path: String) -> Result<BufferStatus> {
-        with_action(|action| {
-            handler::check_buffer(action, &file_path).map(BufferStatus::from)
-        })
+        with_action(|action| handler::check_buffer(action, &file_path).map(BufferStatus::from))
     }
 
     #[napi]
@@ -82,7 +80,8 @@ mod bindings {
     }
 
     #[napi]
-    pub fn send_message(message: String) -> Result<()> {
-        with_action(|action| handler::send_message(action, &message))
+    pub fn send_message(message: String, level: Option<String>) -> Result<()> {
+        let level = level.unwrap_or_else(|| "info".to_string());
+        with_action(|action| handler::send_message(action, &message, &level))
     }
 }

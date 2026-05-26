@@ -46,8 +46,8 @@ impl Action for NeovimAction {
         Ok(())
     }
 
-    fn send_message(&self, message: &str) -> Result<()> {
-        let lua_code = lua::send_notification_lua(message);
+    fn send_message(&self, message: &str, level: &str) -> Result<()> {
+        let lua_code = lua::send_notification_lua(message, level);
         let any_success = connection::for_each_instance(&self.socket_paths, |nvim| {
             nvim.execute_lua(&lua_code, vec![])
                 .map(|_| ())

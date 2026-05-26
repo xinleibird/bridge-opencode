@@ -25,33 +25,28 @@ pub fn refresh_buffer_lua(buf_number: i64) -> String {
         if is_current_buf then
             vim.cmd('redraw')
         end
-
-        vim.notify('🔄 Reloaded by OpenCode.', vim.log.levels.INFO, {{
-          title = 'OpenCode',
-          id = 'OpenCode',
-          icon = '🤖',
-          timeout = 2500,
-
-          }})
         "#,
         buf_number
     )
 }
 
-pub fn send_notification_lua(message: &str) -> String {
+pub fn send_notification_lua(message: &str, level: &str) -> String {
     let escaped = message
         .replace('\\', "\\\\")
         .replace('"', r#"\""#)
         .replace('\n', "\\n")
         .replace('\r', "\\r")
         .replace('\t', "\\t");
-    format!(r#"vim.notify("{}", vim.log.levels.WARN, {{
-      title = 'OpenCode',
-      id = 'OpenCode',
-      icon = '🤖',
-      timeout = 2500,
-    }})
-    "#, escaped)
+    format!(
+        r#"vim.notify("{}", "{}", {{
+          title = 'OpenCode',
+          id = 'OpenCode',
+          icon = '🤖',
+          timeout = 2500,
+        }})
+        "#,
+        escaped, level
+    )
 }
 
 pub fn get_visual_selection_lua() -> &'static str {

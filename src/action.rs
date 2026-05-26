@@ -18,6 +18,6 @@ pub struct EditorContext {
 pub trait Action {
     fn buffer_status(&self, file_path: &str) -> anyhow::Result<BufferStatus>;
     fn refresh_buffer(&self, file_path: &str) -> anyhow::Result<()>;
-    fn send_message(&self, message: &str) -> anyhow::Result<()>;
+    fn send_message(&self, message: &str, level: &str) -> anyhow::Result<()>;
     fn get_visual_selections(&self) -> anyhow::Result<Vec<EditorContext>>;
 }

@@ -1,8 +1,27 @@
 import type { Plugin } from "@opencode-ai/plugin";
 import crypto from "node:crypto";
 import { access } from "node:fs/promises";
-import { isAbsolute, join } from "node:path";
-import { checkBuffer, refreshBuffer, getVisualSelections, sendMessage } from "./index.cjs";
+import { basename, isAbsolute, join } from "node:path";
+
+interface BufferStatus {
+  isCurrent: boolean;
+  hasUnsavedChanges: boolean;
+}
+
+interface EditorContext {
+  filePath: string;
+  startLine: number;
+  endLine: number;
+  cwd: string;
+  content: string;
+}
+
+const { checkBuffer, refreshBuffer, getVisualSelections, sendMessage } = require("./index.cjs") as {
+  checkBuffer: (filePath: string) => Promise<BufferStatus>;
+  refreshBuffer: (filePath: string) => Promise<void>;
+  getVisualSelections: () => Promise<EditorContext[]>;
+  sendMessage: (message: string, level?: string) => Promise<void>;
+};
 
 type ToolName = "Edit" | "Write";
 
@@ -69,7 +88,7 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
       for (const filePath of call.filePaths) {
         const status = await checkBuffer(filePath);
         if (status.hasUnsavedChanges && status.isCurrent) {
-          await sendMessage("⚠️ File has unsaved changes. Please save it first.");
+          await sendMessage("⚠️ File has unsaved changes. Please save it first.", "warn");
           throw new Error(
             "STOP: Cannot apply changes — Neovim has unsaved edits. DO NOT attempt to resolve this yourself. Wait for the user to save or close the file. DO NOT use the Built-In Tools resolve this.",
           );
@@ -86,11 +105,12 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
 
       for (const filePath of pending.filePaths) {
         await refreshBuffer(filePath);
+        await sendMessage("🔄 Reloaded by OpenCode.", "info");
       }
     },
 
     "chat.message": async (input, output) => {
-      let selections;
+      let selections: Awaited<ReturnType<typeof getVisualSelections>>;
       try {
         selections = await getVisualSelections();
       } catch {
@@ -111,11 +131,13 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
         }
         if (!s.startLine) continue;
 
-        const filename = s.filePath.startsWith(cwd + "/")
+        const filepath = s.filePath.startsWith(cwd + "/")
           ? "./" + s.filePath.slice(cwd.length + 1)
           : s.filePath;
-        const displayFilename = `${filename}:${s.startLine}-${s.endLine}`;
-        refs.push(displayFilename);
+
+        refs.push(filepath);
+
+        const filename = basename(s.filePath);
 
         output.parts.push({
           type: "file",
@@ -123,7 +145,7 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
           sessionID: input.sessionID,
           messageID: input.messageID ?? "",
           mime: "text/plain",
-          filename: displayFilename,
+          filename: filename,
           url: `file://${s.filePath}?start=${s.startLine}&end=${s.endLine}`,
         });
         attached++;

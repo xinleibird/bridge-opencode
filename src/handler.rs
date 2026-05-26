@@ -1,4 +1,4 @@
-use crate::action::{BufferStatus, EditorContext, Action, neovim::NeovimAction};
+use crate::action::{neovim::NeovimAction, Action, BufferStatus, EditorContext};
 use crate::utils;
 
 pub fn connect() -> anyhow::Result<NeovimAction> {
@@ -21,6 +21,6 @@ pub fn get_visual_selections(action: &NeovimAction) -> anyhow::Result<Vec<Editor
     action.get_visual_selections()
 }
 
-pub fn send_message(action: &NeovimAction, message: &str) -> anyhow::Result<()> {
-    action.send_message(message)
+pub fn send_message(action: &NeovimAction, message: &str, level: &str) -> anyhow::Result<()> {
+    action.send_message(message, level)
 }
