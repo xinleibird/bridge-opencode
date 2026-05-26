@@ -131,13 +131,15 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
         }
         if (!s.startLine) continue;
 
-        const filepath = s.filePath.startsWith(cwd + "/")
+        const filePath = s.filePath.startsWith(cwd + "/")
           ? "./" + s.filePath.slice(cwd.length + 1)
           : s.filePath;
 
-        refs.push(filepath);
+        const fileRef = `${filePath}:${s.startLine}-${s.endLine}`;
 
-        const filename = basename(s.filePath);
+        refs.push(fileRef);
+
+        const fileName = basename(s.filePath);
 
         output.parts.push({
           type: "file",
@@ -145,7 +147,7 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
           sessionID: input.sessionID,
           messageID: input.messageID ?? "",
           mime: "text/plain",
-          filename: filename,
+          filename: fileName,
           url: `file://${s.filePath}?start=${s.startLine}&end=${s.endLine}`,
         });
         attached++;
