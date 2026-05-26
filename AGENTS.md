@@ -42,13 +42,15 @@ npm run build            # napi build --platform --release
 # 2. stage all changes
 git add .
 
-# 3. commit with conventional-commit message
+# 3. call conventional-commit tool generate commit message
+
+# 4. commit with conventional-commit message
 git commit
 
-# 4. tag matching the new version
+# 5. tag matching the new version
 git tag v0.2.2
 
-# 5. push commit and tag
+# 6. push commit and tag
 git push origin main
 git push origin v0.2.2
 ```
