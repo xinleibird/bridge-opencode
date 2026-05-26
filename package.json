@@ -1,6 +1,7 @@
 {
   "name": "@xinleibird/bridge-opencode",
-  "version": "0.2.2",
+  "version": "0.2.3",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/xinleibird/bridge-opencode"
