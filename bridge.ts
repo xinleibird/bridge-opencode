@@ -104,8 +104,25 @@ export const BridgePlugin: Plugin = async ({ directory }) => {
       pendingByCallID.delete(input.callID);
 
       for (const filePath of pending.filePaths) {
-        await refreshBuffer(filePath);
-        await sendMessage("🔄 Reloaded by OpenCode.", "info");
+        const before = await checkBuffer(filePath);
+        let reloadSucceeded = false;
+        try {
+          await refreshBuffer(filePath);
+          reloadSucceeded = true;
+        } catch (err) {
+          console.error(`Failed to reload ${filePath}:`, err);
+        } finally {
+          if (before.isCurrent) {
+            try {
+              await sendMessage(
+                reloadSucceeded ? "🔄 Reloaded by OpenCode." : "⚠️ Reload failed.",
+                reloadSucceeded ? "info" : "warn",
+              );
+            } catch {
+              // non-fatal
+            }
+          }
+        }
       }
     },
 
